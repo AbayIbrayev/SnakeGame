@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+import static java.lang.String.format;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,11 +22,13 @@ public class GameField extends JPanel implements ActionListener{
 	private int[] y = new int[ALL_DOTS];
 	private int dots;
 	private Timer timer;
+	private static int speed = 100;
 	private boolean left = false;
 	private boolean right = true;
 	private boolean up = false;
 	private boolean down = false;
 	private boolean inGame = true;
+	int score, hiScore;
 
 
 	public GameField(){
@@ -36,15 +40,22 @@ public class GameField extends JPanel implements ActionListener{
 
 	}
 
+
+
 	public void initGame(){
 		dots = 3;
 		for (int i = 0; i < dots; i++) {
 			x[i] = 48 - i * DOT_SIZE;
 			y[i] = 48;
 		}
-		timer = new Timer(250,this);
+		timer = new Timer(speed,this);
 		timer.start();
+		//timer = new Timer(speed,this);
 		createApple();
+		if (score > hiScore)
+            hiScore = score;
+        score = 0;
+        
 	}
 
 	public void createApple(){
@@ -62,16 +73,21 @@ public class GameField extends JPanel implements ActionListener{
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		Graphics2D gg = (Graphics2D) g;
 		if(inGame){
 			g.drawImage(apple,appleX,appleY,this);
 			for (int i = 0; i < dots; i++) {
 				g.drawImage(dot,x[i],y[i],this);
 			}
+			drawScore(g);
 		}
 		else{
 			String str = "Game Over";
-			g.setColor(Color.white);
+			String str2 = "Press ENTER to start again";
+			g.setColor(Color.red);
 			g.drawString(str,210,SIZE/2);
+			g.setColor(Color.white);
+			g.drawString(str2,170,SIZE/2 + 30);
 		}
 	}
 
@@ -96,11 +112,12 @@ public class GameField extends JPanel implements ActionListener{
 		if(x[0] == appleX && y[0] == appleY){
 			dots++;
 			createApple();
+			score++;
 		}
 	}
 
 	public void checkCollisions(){
-		for (int i = dots; i >0 ; i--) {
+		for (int i = dots; i > 0 ; i--) {
 			if(i>4 && x[0] == x[i] && y[0] == y[i]){
 				inGame = false;
 			}
@@ -118,7 +135,16 @@ public class GameField extends JPanel implements ActionListener{
 		if(y[0]<0){
 			inGame = false;
 		}
+		if (!inGame) {
+			timer.stop();
+		}
 	}
+	 void drawScore(Graphics gg) {
+	        int h = getHeight();
+	        gg.setColor(Color.white);
+	        String s = format("hiscore %d    score %d", hiScore, score);
+	        gg.drawString(s, 30, h - 30);
+	    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -156,6 +182,15 @@ public class GameField extends JPanel implements ActionListener{
 				right = false;
 				down = true;
 				left = false;
+			}
+			if ((key == KeyEvent.VK_ENTER) && (inGame == false)) {
+				inGame = true;
+				left = false;
+				right = true;
+				up = false;
+				down = false;
+				inGame = true;
+				initGame();
 			}
 		}
 	}
