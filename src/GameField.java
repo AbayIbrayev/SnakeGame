@@ -1,3 +1,5 @@
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 import static java.lang.String.format;
@@ -7,10 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.Random;
 
 public class GameField extends JPanel implements ActionListener{
-
+	
 	private final int SIZE = 460;
 	private final int DOT_SIZE = 16;
 	private final int ALL_DOTS = 400;
@@ -27,17 +30,17 @@ public class GameField extends JPanel implements ActionListener{
 	private boolean right = true;
 	private boolean up = false;
 	private boolean down = false;
-	private boolean inGame = true;
+	private boolean inGame = false;
 	int score, hiScore;
-
+	Font smallFont;
 
 	public GameField(){
-		setBackground(Color.black);
+		setBackground(Color.LIGHT_GRAY);
 		loadImages();
 		initGame();
 		addKeyListener(new FieldKeyListener());
 		setFocusable(true);
-
+		timer.stop();
 	}
 
 
@@ -50,12 +53,10 @@ public class GameField extends JPanel implements ActionListener{
 		}
 		timer = new Timer(speed,this);
 		timer.start();
-		//timer = new Timer(speed,this);
 		createApple();
 		if (score > hiScore)
-            hiScore = score;
-        score = 0;
-        
+			hiScore = score;
+		score = 0;
 	}
 
 	public void createApple(){
@@ -81,13 +82,16 @@ public class GameField extends JPanel implements ActionListener{
 			}
 			drawScore(g);
 		}
-		else{
-			String str = "Game Over";
-			String str2 = "Press ENTER to start again";
+		else {
+			String str = "SNAKE GAME";
+			String str2 = "Press ENTER to start the game";
+			g.setFont(new Font("SansSerif", Font.BOLD, 25));
 			g.setColor(Color.red);
-			g.drawString(str,210,SIZE/2);
+			g.drawString(str,160,SIZE/2 - 50);
 			g.setColor(Color.white);
-			g.drawString(str2,170,SIZE/2 + 30);
+			g.drawString(str2,70,SIZE/2);
+			String str3 = "Press M to start the music";
+			g.drawString(str3,86,SIZE);
 		}
 	}
 
@@ -120,31 +124,37 @@ public class GameField extends JPanel implements ActionListener{
 		for (int i = dots; i > 0 ; i--) {
 			if(i>4 && x[0] == x[i] && y[0] == y[i]){
 				inGame = false;
+				JOptionPane.showMessageDialog(this,"Congratulations! You lost."); 
 			}
 		}
 
 		if(x[0]>SIZE){
 			inGame = false;
+			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
 		}
 		if(x[0]<0){
 			inGame = false;
+			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
 		}
 		if(y[0]>SIZE){
 			inGame = false;
+			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
 		}
 		if(y[0]<0){
 			inGame = false;
+			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
 		}
 		if (!inGame) {
 			timer.stop();
 		}
 	}
-	 void drawScore(Graphics gg) {
-	        int h = getHeight();
-	        gg.setColor(Color.white);
-	        String s = format("hiscore %d    score %d", hiScore, score);
-	        gg.drawString(s, 30, h - 30);
-	    }
+	void drawScore(Graphics gg) {
+		int h = getHeight();
+		gg.setColor(Color.red);
+		String s = format("high score: %d    score: %d", hiScore, score);
+		gg.setFont(new Font("SansSerif", Font.BOLD, 20));
+		gg.drawString(s, 30, h - 30);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -152,9 +162,22 @@ public class GameField extends JPanel implements ActionListener{
 			checkApple();
 			checkCollisions();
 			move();
-
 		}
 		repaint();
+	}
+
+	public void music() {
+		try {
+			File file = new File("funk.wav");
+			Clip clip = AudioSystem.getClip();
+			clip.open(AudioSystem.getAudioInputStream(file));
+			clip.start();
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
+			//Thread.sleep(30000);
+			
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	class FieldKeyListener extends KeyAdapter{
@@ -189,8 +212,10 @@ public class GameField extends JPanel implements ActionListener{
 				right = true;
 				up = false;
 				down = false;
-				inGame = true;
 				initGame();
+			}
+			if(key == KeyEvent.VK_M){
+				music();
 			}
 		}
 	}
