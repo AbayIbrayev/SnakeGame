@@ -14,9 +14,9 @@ import java.util.Random;
 
 public class GameField extends JPanel implements ActionListener{
 	
-	private final int SIZE = 460;
+	private final int SIZE = 560;
 	private final int DOT_SIZE = 16;
-	private final int ALL_DOTS = 400;
+	private final int ALL_DOTS = 1225;
 	private Image dot;
 	private Image apple;
 	private int appleX;
@@ -87,11 +87,11 @@ public class GameField extends JPanel implements ActionListener{
 			String str2 = "Press ENTER to start the game";
 			g.setFont(new Font("SansSerif", Font.BOLD, 25));
 			g.setColor(Color.red);
-			g.drawString(str,160,SIZE/2 - 50);
+			g.drawString(str,210,SIZE/2 - 50);
 			g.setColor(Color.white);
-			g.drawString(str2,70,SIZE/2);
+			g.drawString(str2,116,SIZE/2);
 			String str3 = "Press M to start the music";
-			g.drawString(str3,86,SIZE);
+			g.drawString(str3,135,SIZE);
 		}
 	}
 
