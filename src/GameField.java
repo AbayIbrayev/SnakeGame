@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.Random;
 
 public class GameField extends JPanel implements ActionListener{
-	
+
 	private final int SIZE = 560;
 	private final int DOT_SIZE = 16;
 	private final int ALL_DOTS = 1225;
@@ -54,14 +54,15 @@ public class GameField extends JPanel implements ActionListener{
 		timer = new Timer(speed,this);
 		timer.start();
 		createApple();
-		if (score > hiScore)
+		if (score > hiScore) {
 			hiScore = score;
-		score = 0;
+			score = 0;
+			}
 	}
 
 	public void createApple(){
-		appleX = new Random().nextInt(20)*DOT_SIZE;
-		appleY = new Random().nextInt(20)*DOT_SIZE;
+		appleX = new Random().nextInt(35)*DOT_SIZE;
+		appleY = new Random().nextInt(35)*DOT_SIZE;
 	}
 
 	public void loadImages(){
@@ -128,19 +129,7 @@ public class GameField extends JPanel implements ActionListener{
 			}
 		}
 
-		if(x[0]>SIZE){
-			inGame = false;
-			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
-		}
-		if(x[0]<0){
-			inGame = false;
-			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
-		}
-		if(y[0]>SIZE){
-			inGame = false;
-			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
-		}
-		if(y[0]<0){
+		if(x[0]>SIZE || x[0]<0 || y[0]>SIZE || y[0]<0 || y[0]<0){
 			inGame = false;
 			JOptionPane.showMessageDialog(this,"Congratulations! You lost.");
 		}
@@ -174,7 +163,7 @@ public class GameField extends JPanel implements ActionListener{
 			clip.start();
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 			//Thread.sleep(30000);
-			
+
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
